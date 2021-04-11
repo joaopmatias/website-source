@@ -7,7 +7,7 @@ theme: "hugo-PaperMod"
 enableInlineShortcodes: true
 
 params:
-    description: 'Data scientist and mathematician'
+    description: 'Data Scientist, Math and Python geek'
     defaultTheme: auto
     ShowReadingTime: true
     ShowShareButtons: true
@@ -21,7 +21,7 @@ params:
         enabled: true
         title: "João Matias" # optional default will be site title
         imageUrl: "images/photo_front.jpg" # optional
-        subtitle: Data Scientist and mathematician
+        subtitle: Data Scientist, Math and Python geek
         imageTitle: "Data scientist" # optional
 
     socialIcons: # optional

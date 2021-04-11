@@ -3,8 +3,8 @@ title = "About"
 date = "2020-10-04"
 +++
 
-I'm a mathematician located in Coimbra, Portugal, with a deep interest in Data Science.
+I'm a data scientist located in Lisbon and Coimbra, Portugal, currenttly working in time series analysis and using Python.
 
-I complected my PhD at Penn State, and am part of the fast growing Talkdesk TDX cluster.
+I earned my PhD in Mathematics at Penn State and I am now working at Talkdesk in the Workforce Management product.
 
-If you're also interested in Data Science, and find something interesting in this website, feel free to get in touch with me!
+My interests are diverse and include most aspects of data science, software development and the Python programming language.

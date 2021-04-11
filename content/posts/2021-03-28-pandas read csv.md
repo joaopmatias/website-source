@@ -10,7 +10,7 @@ For that reason, reading a simple CSV file in Pandas can become a bit complex. I
 
 ## Signature
 
-We will only focus a subset of the arguments of `read_csv`. They are shown below with their default values. Only, the `filepath` is a positional argument.
+We will only focus a subset of the arguments of `read_csv`. They are shown below with their default values. Only the `filepath` is a positional argument.
 
 ```python
 pandas.read_csv(filepath_or_buffer: FilePathOrBuffer,
@@ -62,7 +62,7 @@ Consider a file with 3 columns.
 "2021-01-01 01:15:00+00"	4	"4"
 ```
 ### 1.1)
-Loading the data with
+In the first snippet, we use the left column as index and transform it into a date object. We also assign `col1` and `col2` as column names.
 ```python
 pandas.read_csv("example.csv",
                 sep="\t",
@@ -75,12 +75,12 @@ The result is
 ![1.1](/images/blog/dataframe/df_1.1.png)
 
 ### 1.2)
-Loading the data with
+Below, we use the row numbers as indexes and assign `col0`, `col1` and `col2` as column names. The entries in the first column are transformed into date objects.
 ```python
 pandas.read_csv("example.csv",
                 sep="\t",
                 names=["col0", "col1", "col2"],
-                index_col=0,
+                index_col=False,
                 parse_dates=[0]
     )
 ```
@@ -88,7 +88,7 @@ The result is
 ![1.2](/images/blog/dataframe/df_1.2.png)
 
 ### 1.3)
-Loading the data with
+Now, we use the entries in the middle column as indexes and assign `col0` and `col2` as column names. The entries in the first column are transformed into date objects.
 ```python
 pandas.read_csv("example.csv",
                 sep="\t",
@@ -111,7 +111,7 @@ Consider a different file with 3 columns.
 "2021-01-01 01:15:00+00",4,"4"
 ```
 ### 2.1)
-Loading the data with
+In this case, the separator argument can be omitted. The column names are infered to be `col0`, `col1` and `col2` and we use the left column entries as indexes. The indices are transformed into date objects. 
 ```python
 pandas.read_csv("example.csv",
                 index_col="col0",
@@ -122,7 +122,7 @@ The result is
 ![2.1](/images/blog/dataframe/df_2.1.png)
 
 ### 2.2)
-Loading the data with
+Finally, the column names are infered to be `col0`, `col1` and `col2` and we use the middle column entries as indexes.
 ```python
 pandas.read_csv("example.csv",
                 index_col=1,
