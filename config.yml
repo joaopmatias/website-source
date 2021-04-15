@@ -26,17 +26,17 @@ params:
 
     socialIcons: # optional
         - name: github
-          url: 'https://joaopmatias.github.io'
+          url: 'https://www.github.com/joaopmatias'
         - name: twitter
           url: 'https://twitter.com/JwowMatias'
         - name: stackoverflow
           url: 'https://stackoverflow.com/users/11454106/jo%c3%a3o-matias'
         - name: linkedin
           url: 'https://www.linkedin.com/in/joaopcmatias'
-        - name: fontawesome-medium-4
+        - name: medium
           url: 'https://medium.com/@joaopmatias'
-        - name: CV
-          url: 'CV/CV_JMatias.pdf'
+        - name: vitae
+          url: 'CV/CV_Matias_2021_04.pdf'
 
 menu:
     main:
