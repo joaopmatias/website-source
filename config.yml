@@ -36,7 +36,7 @@ params:
         - name: medium
           url: 'https://medium.com/@joaopmatias'
         - name: vitae
-          url: 'CV/CV_Matias_2021_04.pdf'
+          url: 'CV/CV_2023_06.pdf'
 
 menu:
     main:
