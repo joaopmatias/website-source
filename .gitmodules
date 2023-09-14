@@ -4,3 +4,9 @@
 [submodule "blog_notebooks/2023-07-18-log-parsing/logparser"]
 	path = blog_notebooks/2023-07-18-log-parsing/logparser
 	url = https://github.com/joaopmatias/logparser
+[submodule "themes/PaperModX"]
+	path = themes/PaperModX
+	url = https://github.com/reorx/hugo-PaperModX
+[submodule "themes/PaperMod"]
+	path = themes/PaperMod
+	url = https://github.com/adityatelange/hugo-PaperMod

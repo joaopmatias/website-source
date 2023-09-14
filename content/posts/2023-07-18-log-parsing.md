@@ -3,7 +3,9 @@ layout: post
 date: 2023-07-18
 title:  "Logs: Finding Structure in the Chaos"
 ShowToc: true
-#draft: true
+TocSide: 'right'
+TocOpen: true
+draft: true
 ---
 
 <!-- your comment text 

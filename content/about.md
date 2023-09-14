@@ -1,6 +1,6 @@
 +++
 title = "About"
-date = "2020-10-04"
+date = "2023-08-01"
 +++
 
 I'm a data scientist located in Lisbon, Portugal, currenttly working in time series analysis and Python.
