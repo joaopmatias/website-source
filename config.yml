@@ -22,7 +22,6 @@ params:
         favicon32x32: "snake-32x32.png"
         safari_pinned_tab: "snake.svg"
 
-
     homeInfoParams:
         enabled: false
         title: "Hi there \U0001F44B"

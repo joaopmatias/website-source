@@ -5,80 +5,66 @@ title:  "Logs: Finding Structure in the Chaos"
 ShowToc: true
 TocSide: 'right'
 TocOpen: true
-draft: true
+math: true
 ---
 
-<!-- your comment text 
-
-
-Do you wonder how modern tools analyze and gaub insights from logs?
-
-The following repository contains a collections 
-
-
---------------------
-
-
-Why?
-Read logs faster
-
-Nice dashboards
-
-What?
-This project online
-
-Pandas
-
-Plotly
-
-
-How?
-Find a dataset
-Get the code
-Go ham!
-
-
-The Cray data
-
-in
-
-https://www.usenix.org/cfdr-data
-
-
---------------------
- -->
-
-Did you ever get overwhelmed trying to understand all different log message of an application? In this post I'd like to share a solution to analyze application logs that combines different open source projects to produce an appealing dashboard summarizing all information.
+Did you ever get overwhelmed trying to understand all different log message of an application? In this post I'd like to share how to analyze application logs combining different open source projects to produce an appealing dashboard summarizing all information.
 
 We will use a github repository with a collection of algorithms to parse logs, [logparser](https://github.com/logpai/logparser), _plotly_ to create interactive plots, and _pandas_ to transform data.
 
 
-For starters, we will by briefly explain the dependencies and datasets used, and later we show one example of a dashboard.
+For starters, we will by briefly explain the dependencies and datasets used, and later we show how to obtain a dashboard like the following.
 
+![Plot Results](/images/blog/logs_histogram.png)
 
 Let us get started!
 
-# Dependencies
+## Dependencies
 
-## Logparser
+### Logparser
 
-The first and main dependency is the repository [logparser](https://github.com/logpai/logparser) which consists of a collection of implementations of algorithms parse logs. Furthermore, the repository includes the corresponding articles explaining each algorithm to great extent.
+The first and main dependency is the repository [logparser](https://github.com/logpai/logparser) which consists of a collection of algorithms to parse logs. Furthermore, the repository includes articles explaining each algorithm to great extent.
 
-One of the algorithm that works quite well is _Spell_ and we will use it throughout the post. _Spell_ works well in most scenarios since it is fast, requires no pre-defined log templates or regular expressions specific to the application, and parses logs in an online streaming fashion, so it is able to start parsing logs immediately.
+One of the algorithm that works quite well is _Spell_ and we will use it throughout the post. _Spell_ works well in most scenarios since it is fast, requires no pre-defined log templates or regular expressions, and parses logs in an online streaming fashion, so it is able to start parsing logs immediately.
 
 
 The accuracy of _Spell_ is also supported by multiple benchmarks collected in [logparser](https://github.com/logpai/logparser) and its performance is often one of the best amongst the options tested.
 
-This algorithm calculates the longest common sequences between log messages and groups them together depending on how big it is compared to the size of each log message. The hyperparameter _tau_ can be used to specify the cutoff of the ratio between the longest common sequence and the number of tokens of the log message in order to a log message to be grouped with other messages.
+This algorithm processes a stream of logs by associating each incoming log to the element from a growing list of log templates that shares the _longest common subsequence_ with it. If the incoming log is very different from the current log templates, then a new log template is added to the list. The parameter tau can also be tweaked to manage the number of log templates. 
 
-### Example
+**Remark:** In this blog we added some [small modifications](https://github.com/joaopmatias/logparser/) to the code provided in the logparser repository since that was developed with Windows machines in mind and it behaves slightly differently in our machines that run macOS.
+
+#### Example
+
+As a short example, we can see what happens as the following logs are processed using the Spell algorithm.
+
+```text
+The ducks waddled in the park.
+The ducks walkded in the park.
+The ducks flew in the air.
+The cat chased birds in the Spark.
+```
+
+After the first two lines are read, they are associated with the same log template as shown below. Note that the positions where the log lines differ are omited from the log template and the corresponding tokens are considered parameters.
+
+| Log Template                | Parameter List |
+|-----------------------------|----------------|
+| The ducks <*> in the park.  |  ['waddled']   |
+| The ducks <*> in the park.  |  ['walkded']   |
 
 
+Then, we note that the third line still has a significant substring in common with the previous log template, so it is grouped with the previous log messages. Finally, the last line does have a substring longer than half of its length in common with the log template, so it originates a new log template.
 
+| Log Template                      | Parameter List    |
+|-----------------------------------|-------------------|
+| The ducks <\*> in the <\*>.       | ['waddled', park] |
+| The ducks <\*> in the <\*>.       | ['walkded', park] |
+| The ducks <\*> in the <\*>.       | ['flew'   , air]  |
+| The cat chased birds in the park. | []                |
 
-## Cray Data
+### Cray Data
 
-We use log data shared by [usenix](https://www.usenix.org/cfdr-data), specifically the [log dataset](https://www.usenix.org/sites/default/files/4366-0809181018.tar.gz) corresponding to Cray Systems.
+We use log data shared by [usenix](https://www.usenix.org/cfdr-data), specifically the [log dataset](https://www.usenix.org/sites/default/files/4366-0809181018.tar.gz) corresponding to Cray Supercomputer. This file has close to 250K log lines.
 
 
 Here is a sample of the logs.
@@ -101,27 +87,32 @@ Boot Node Daemon starting at Tue Sep  9 20:18:34 2008.
 [Tue Sep  9 20:18:41 2008]:start  is 0x2b20e175b010
 ```
 
+As you can see, each log line start with a timestamp and is followed by a message.
 
-# Dashboard
+## Dashboard
 
-Now we start the example.
+Putting together all the pieces mentioned above we can obtain the following dashboard. You can also produce the same plot using [this notebook](https://github.com/joaopmatias/website-source/tree/master/blog_notebooks/2023-07-18-log-parsing).
 
-Show the full picture immediatelly
 
-## Parsing logs
+![Plot Results](/images/blog/logs_histogram.png)
 
-The algorithm creates two files...
+
+Aside from grouping similar logs, we can also see their timestamps and infer whether the log messages were sporadic or recurrent.
+
+
+### Parsing logs
+
+After downloading the logs files, the following code snippet injests the log messages and producces two CSV files, one listing all the log templates and another listing all log messages with their corresponding log templates and parameters.
 
 ```python
 import pandas as pd
-from logparser.Spell import Spell  # use tau=0.8
+from logparser.Spell import Spell
 
 t = "data/0809181018"
 parser = Spell.LogParser(log_format="\[<Timestamp>\]:<Content>", indir=t, outdir=t, tau=0.5)
 parser.parse("bnd.log")
 ```
-
-Structured
+As an example, here is part of the output file that includes the log messages.
 
 
 | LineId | Timestamp                | Content                            | EventId  | EventTemplate                     | ParameterList       |
@@ -133,23 +124,26 @@ Structured
 |     15 | Tue Sep  9 20:18:41 2008 | Set comp mdh[1] to 0x1             | 2bab36e2 | Set comp <*> to <*>               | "['mdh[1]', '0x1']" |
 
 
-## Timestamps
+### Timestamps
+
+In order to convert the Timestamp column into an actual time we use regular expressions to extract the year, month, day and time from the the existing field.
 
 ```python
-(
-    df
-    .assign(
-        Timestamp=lambda x0:
-        x0["Timestamp"]
-        .str.extract(r"\S+\s+(?P<m>\S+)\s+(?P<d>\S+)\s+(?P<t>\S+)\s+(?P<y>\S+)")
-        .replace(dict(zip(month_abbr, range(13))))
-        .assign(m=lambda x: x["m"].astype(str).str.rjust(2, "0"))
-        .assign(d=lambda x: x["d"].astype(str).str.rjust(2, "0"))
-        .pipe(lambda x: pd.to_datetime(x["y"] + "-" + x["m"] + "-" + x["d"] + " " + x["t"])))
-)
+from calendar import math_abbr
+
+df.assign(
+    Timestamp=lambda x0:
+    x0["Timestamp"]
+    .str.extract(r"\S+\s+(?P<m>\S+)\s+(?P<d>\S+)\s+(?P<t>\S+)\s+(?P<y>\S+)")
+    .replace(dict(zip(month_abbr, range(13))))
+    .assign(m=lambda x: x["m"].astype(str).str.rjust(2, "0"))
+    .assign(d=lambda x: x["d"].astype(str).str.rjust(2, "0"))
+    .pipe(lambda x: pd.to_datetime(x["y"] + "-" + x["m"] + "-" + x["d"] + " " + x["t"])))
 ```
 
-## Plot Result
+### Plot Result
+
+We use the plotly.express module to concisely create the histogram with the different log templates. Note that we plot time in the x-axis, and we position the legend below the graph, instead of next to it.
 
 ```python
 import plotly.express as px
@@ -176,10 +170,14 @@ df = pd.read_csv(next(Path(t).glob("*_structured.csv")))
 )
 ```
 
+Once again, here is the final result.
+
 ![Plot Results](/images/blog/logs_histogram.png)
 
+Again, the dashboard can be produced using [this notebook](https://github.com/joaopmatias/website-source/tree/master/blog_notebooks/2023-07-18-log-parsing).
 
+## Conclusion
 
+Throughout this post we describe some basic building blocks to produce insights from log messages.
 
-
-
+I hope you enjoyed it!
